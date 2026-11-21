@@ -15,6 +15,9 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 
+from defensive_topics import DEFENSIVE_TOPICS
+
+
 DSA = re.compile(r"^\s*(\d{1,3})\.\s*(.+?)\s+\[(Easy|Medium|Hard)\]\s*$")
 PATTERN = re.compile(r"^\s*Pattern:\s*(.+)$")
 FENCE = re.compile(r"^```([\w+-]+)\s*\n(.*?)^\s*```\s*$", re.M | re.S)
@@ -77,6 +80,16 @@ def index(source_dir, out):
     units = []
     for pdf in pdfs:
         checksum = hashlib.sha256(pdf.read_bytes()).hexdigest()
+        briefs = DEFENSIVE_TOPICS.get(pdf.name.casefold())
+        if briefs is not None:
+            units.extend({
+                "document": pdf.name, "sha256": checksum, "page": None,
+                "id": f"{checksum}:defensive:{number}",
+                "group": "defensive-security",
+                "kind": "defensive", "text": brief,
+            } for number, brief in enumerate(briefs, 1))
+            print(f"{pdf.name}: {len(briefs)} curated defensive units")
+            continue
         pages = subprocess.check_output(
             ["pdftotext", "-layout", str(pdf.resolve()), "-"], encoding="utf-8"
         ).split("\f")
