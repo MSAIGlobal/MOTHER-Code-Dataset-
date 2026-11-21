@@ -102,3 +102,14 @@ Review `merge-report.json` and verify split sizes and source coverage before
 pointing a new run at the result. Use a separate run with a fresh dataset
 index when changing corpus order or content. An existing checkpoint's chunk
 offset belongs to its original corpus.
+
+## Defensive security supplements
+
+The indexer recognises the ten security supplement filenames listed in
+`defensive_topics.py` and creates 30 original defensive exercise briefs.
+Keep their supplied filenames. PDF bytes are hashed for document-level
+provenance. Only the curated briefs enter the generation request, so
+their page field is null. These exercises cover web and LLM controls,
+wireless configuration, log triage, secure updates, session resilience
+and satellite communications confidentiality. Review defensive answers
+and check the same CORE baseline for duplication before training.
